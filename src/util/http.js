@@ -1,3 +1,7 @@
+import { QueryClient } from '@tanstack/react-query';
+
+export const queryClient = new QueryClient();
+
 export async function fetchEvents({ signal, searchTerm }) {
   console.log(searchTerm);
   let url = 'https://3000-arronbeale-reacttanstac-ce623wqpb30.ws-eu105.gitpod.io/events';
