@@ -6,10 +6,10 @@ import { fetchEvent } from '../../util/http.js';
 import ErrorBlock from '../UI/ErrorBlock.jsx';
 
 export default function EventDetails() {
-  useParams();
+  const params = useParams();
   const { data, isPending, isError, error } = useQuery({
     queryKey: ['events', params.id],
-    queryFn: ({signal}) => fetchEvent({signal, id: useParams.id}),
+    queryFn: ({signal}) => fetchEvent({signal, id: params.id}),
   });
 
   let content;
@@ -38,7 +38,7 @@ export default function EventDetails() {
             </nav>
         </header>
         <div id="event-details-content">
-          <img src={`http://locatlhost:3000/${data.image}`} alt={data.title} />
+          <img src={`https://3000-arronbeale-reacttanstac-ce623wqpb30.ws-eu105.gitpod.io/${data.image}`} alt={data.title} />
           <div id="event-details-info">
             <div>
               <p id="event-details-location">{data.location}</p>

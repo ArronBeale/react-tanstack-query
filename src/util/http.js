@@ -26,7 +26,7 @@ export async function fetchEvents({ signal, searchTerm }) {
 
 
 export async function createNewEvent(eventData) {
-  const response = await fetch(`https://3000-arronbeale-reacttanstac-ce623wqpb30.ws-eu105.gitpod.io/events`, {
+  const response = await fetch('https://3000-arronbeale-reacttanstac-ce623wqpb30.ws-eu105.gitpod.io/events', {
     method: 'POST',
     body: JSON.stringify(eventData),
     headers: {
@@ -46,7 +46,6 @@ export async function createNewEvent(eventData) {
   return event;
 }
 
-
 export async function fetchSelectableImages({ signal }) {
   const response = await fetch(`https://3000-arronbeale-reacttanstac-ce623wqpb30.ws-eu105.gitpod.io/events/images`, { signal });
 
@@ -62,9 +61,8 @@ export async function fetchSelectableImages({ signal }) {
   return images;
 }
 
-
 export async function fetchEvent({ id, signal }) {
-  const response = await fetch(`http://localhost:3000/events/${id}`, { signal });
+  const response = await fetch(`https://3000-arronbeale-reacttanstac-ce623wqpb30.ws-eu105.gitpod.io/events/${id}`, { signal });
 
   if (!response.ok) {
     const error = new Error('An error occurred while fetching the event');
@@ -80,7 +78,7 @@ export async function fetchEvent({ id, signal }) {
 
 
 export async function deleteEvent({ id }) {
-  const response = await fetch(`http://localhost:3000/events/${id}`, {
+  const response = await fetch(`https://3000-arronbeale-reacttanstac-ce623wqpb30.ws-eu105.gitpod.io/events${id}`, {
     method: 'DELETE',
   });
 
