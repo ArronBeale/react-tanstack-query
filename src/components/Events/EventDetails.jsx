@@ -1,28 +1,37 @@
 import { Link, Outlet, useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
+import { useState } from 'react';
 
 import Header from '../Header.jsx';
 import { fetchEvent, deleteEvent, queryClient } from '../../util/http.js';
 import ErrorBlock from '../UI/ErrorBlock.jsx';
+import Modal from '../UI/Modal.jsx';
 
 export default function EventDetails() {
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const params = useParams();
   const navigate = useNavigate();
 
   const { data, isPending, isError, error } = useQuery({
     queryKey: ['events', params.id],
-    queryFn: ({signal}) => fetchEvent({signal, id: params.id}),
+    queryFn: ({ signal }) => fetchEvent({ signal, id: params.id }),
   });
 
   const { mutate } = useMutation({
     mutationFn: deleteEvent,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['events']
+        queryKey: ['events'],
+        refetchType: 'none',
       });
       navigate('/events');
-    }
+    },
   });
+
+  function handleStartDelete() {}
+
+  function handleStopDelete() {}
 
   function handleDelete() {
     mutate({ id: params.id });
@@ -31,16 +40,25 @@ export default function EventDetails() {
   let content;
 
   if (isPending) {
-    content = (<div id='event-details-content' className='center'>
-      <p>Fetching event data...</p>
-    </div>
+    content = (
+      <div id='event-details-content' className='center'>
+        <p>Fetching event data...</p>
+      </div>
     );
   }
 
   if (isError) {
-    content = <div id='event-details-content' className='center'>
-      <ErrorBlock title='Failed to load event' message={error.info?.message || 'Failed to fetch event data, try again later.'} />
-    </div>
+    content = (
+      <div id='event-details-content' className='center'>
+        <ErrorBlock
+          title='Failed to load event'
+          message={
+            error.info?.message ||
+            'Failed to fetch event data, try again later.'
+          }
+        />
+      </div>
+    );
   }
 
   if (data) {
@@ -48,40 +66,54 @@ export default function EventDetails() {
       day: 'numeric',
       month: 'short',
       year: 'numeric',
-    })
+    });
     content = (
       <>
         <header>
           <h1>{data.title}</h1>
-            <nav>
-              <button onClick={handleDelete}>Delete</button>
-              <Link to="edit">Edit</Link>
-            </nav>
+          <nav>
+            <button onClick={handleStartDelete}>Delete</button>
+            <Link to='edit'>Edit</Link>
+          </nav>
         </header>
-        <div id="event-details-content">
-          <img src={`https://3000-arronbeale-reacttanstac-ce623wqpb30.ws-eu105.gitpod.io/${data.image}`} alt={data.title} />
-          <div id="event-details-info">
+        <div id='event-details-content'>
+          <img
+            src={`https://3000-arronbeale-reacttanstac-ce623wqpb30.ws-eu105.gitpod.io/${data.image}`}
+            alt={data.title}
+          />
+          <div id='event-details-info'>
             <div>
-              <p id="event-details-location">{data.location}</p>
-              <time dateTime={`Todo-DateT$Todo-Time`}>{formattedDate} @ {data.time}</time>
+              <p id='event-details-location'>{data.location}</p>
+              <time dateTime={`Todo-DateT$Todo-Time`}>
+                {formattedDate} @ {data.time}
+              </time>
             </div>
-            <p id="event-details-description">{data.description}</p>
+            <p id='event-details-description'>{data.description}</p>
           </div>
         </div>
       </>
-      
-    )
+    );
   }
 
   return (
     <>
+      {isDeleting && (
+        <Modal onClose={handleStopDelete}>
+          <h2>Are you sure?</h2>
+          <p>Do you really want to delete this event? This cannt be undone.</p>
+          <div className='form-actions'>
+            <button onClick={handleStopDelete} className='button-text'>Cancel</button>
+            <button onClick={handleDelete} className='button'>Delete</button>
+          </div>
+        </Modal>
+      )}
       <Outlet />
       <Header>
-        <Link to="/events" className="nav-item">
+        <Link to='/events' className='nav-item'>
           View all Events
         </Link>
       </Header>
-      <article id="event-details">{content}</article>
+      <article id='event-details'>{content}</article>
     </>
   );
 }
